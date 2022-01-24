@@ -1,0 +1,3 @@
+sendgrid
+python-decouple
+jinja2
