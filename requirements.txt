@@ -1,3 +1,7 @@
 sendgrid
 python-decouple
 jinja2
+fastapi
+uvicorn
+pydantic
+requests

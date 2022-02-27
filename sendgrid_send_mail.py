@@ -1,8 +1,7 @@
 # using SendGrid's Python Library
 # https://github.com/sendgrid/sendgrid-python
-import os
 import logging
-from typing import List
+from typing import List, Dict, Optional
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from decouple import config
@@ -14,20 +13,26 @@ API_KEY = config("SENDGRID_API_KEY")
 logger = logging.getLogger(__name__)
 
 
-def create_and_send_mail(sender, recipients, subject, render_data):
-    html_content = get_formatted_content('basic_template.html', render_data)
+def create_and_send_mail(
+        sender: str,
+        recipients: List[str],
+        subject: str,
+        template_name: str = "basic_template.html",
+        render_data: Optional[Dict] = None
+):
+    html_content = get_formatted_content(template_name, render_data)
     message = create_message(sender, recipients, subject, html_content)
     send_message(message)
 
 
-def get_formatted_content(html_template, render_data):
+def get_formatted_content(html_template: str, render_data: Dict):
     j2_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), trim_blocks=True)
     j2_tpl = j2_env.get_template(html_template)
     email_text = j2_tpl.render(render_data)
     return email_text
 
 
-def create_message(sender: str, recipients: List, subject: str, html_content: str):
+def create_message(sender: str, recipients: List[str], subject: str, html_content: str):
     if len(recipients) == 1:
         recipients = recipients[0]
     return Mail(from_email=sender,
